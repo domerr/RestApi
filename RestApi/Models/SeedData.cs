@@ -31,7 +31,7 @@ namespace RestApi.Models
                         Id = 1,
                         Name = "Pen",
                         Sku = 522,
-                        Description = "Hello world2!"
+                        Description = "Good looking pen"
                     },
 
                     new Products
@@ -39,7 +39,22 @@ namespace RestApi.Models
                         Id = 2,
                         Name = "Book",
                         Sku = 521,
-                        Description = "Hello world!"
+                        Description = "Good looking book"
+                    },
+
+                    new Products
+                    {
+                        Id = 3,
+                        Name = "Keyboard",
+                        Sku = 523,
+                        Description = "Good looking keyboard"
+                    },
+                    new Products
+                    {
+                        Id = 4,
+                        Name = "Mouse",
+                        Sku = 524,
+                        Description = "Good looking mouse"
                     }
                 );
 
@@ -48,29 +63,15 @@ namespace RestApi.Models
                     new Pricelists
                     {
                         Id = 1,
-                        Name = "Pen",
-                        Currency = "€"
+                        Name = "Price for Norway",
+                        Currency = "NOK"
                     },
 
                     new Pricelists
                     {
                         Id = 2,
-                        Name = "Pen",
-                        Currency = "$"
-                    },
-
-                    new Pricelists
-                    {
-                        Id = 3,
-                        Name = "Book",
-                        Currency = "€"
-                    },
-
-                    new Pricelists
-                    {
-                        Id = 4,
-                        Name = "Book",
-                        Currency = "$"
+                        Name = "Price for Poland",
+                        Currency = "PLN"
                     }
                 );
 
@@ -80,7 +81,7 @@ namespace RestApi.Models
                         Id = 1,
                         PricelistId = 1,
                         ProductId = 1,
-                        Amount = 4
+                        Amount = 20
                     },
 
                     new Prices
@@ -88,23 +89,54 @@ namespace RestApi.Models
                         Id = 2,
                         PricelistId = 2,
                         ProductId = 1,
-                        Amount = 3
+                        Amount = 50
                     },
 
                     new Prices
                     {
                         Id = 3,
-                        PricelistId = 3,
+                        PricelistId = 1,
                         ProductId = 2,
-                        Amount = 1
+                        Amount = 40
                     },
 
                     new Prices
                     {
                         Id = 4,
-                        PricelistId = 4,
+                        PricelistId = 2,
                         ProductId = 2,
-                        Amount = 2
+                        Amount = 80
+                    },
+                    new Prices
+                    {
+                        Id = 5,
+                        PricelistId = 1,
+                        ProductId = 3,
+                        Amount = 200
+                    },
+
+                    new Prices
+                    {
+                        Id = 6,
+                        PricelistId = 2,
+                        ProductId = 3,
+                        Amount = 600
+                    },
+
+                    new Prices
+                    {
+                        Id = 7,
+                        PricelistId = 1,
+                        ProductId = 4,
+                        Amount = 4000
+                    },
+
+                    new Prices
+                    {
+                        Id = 8,
+                        PricelistId = 2,
+                        ProductId = 4,
+                        Amount = 80000
                     }
                 );
 

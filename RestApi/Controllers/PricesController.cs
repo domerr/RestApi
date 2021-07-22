@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RestApi.Models;
 
@@ -30,52 +31,180 @@ namespace RestApi.Controllers
         */
 
         // GET: api/Evaluate/5/$
-        [HttpGet("evaluate/{Id}/{currency}")]
-        public async Task<ActionResult<Prices>> GetEvaluate(long Id, string currency)
+        [HttpGet("evaluate")]
+        public  async Task<ActionResult<IEnumerable<Prices>>> GetEvaluate(string productId, string currency)
         {
+            //Separate different product id's and make them long type
+            string[] productIdSeparated = productId.Split(',');
+            long[] longProductIdSeparated = Array.ConvertAll(productIdSeparated, long.Parse);
 
-            //Find product ID
-            var product = await _context.Product.FindAsync(Id);
+            //Separate different currency
+            string[] currencySeparated = currency.Split(',');
 
-            if (product == null)
+            //Searching for Pricelists id for currency choosen
+            List<String> pricelistsId = new List<String>();
+            List<String> pricelistsCurrencyName = new List<String>();
+
+            for (int i = 0; i < currencySeparated.Length; i++)
+            {
+                var pricelistId = await _context.Pricelist
+                  .Where(b => b.Currency == currencySeparated[i])
+                  .OrderBy(b => b.Id)
+                  .Select(b => new SelectListItem
+                  {
+                      Value = b.Id.ToString(),
+                      Text = b.Name
+                  })
+                  .ToListAsync();
+
+                foreach (SelectListItem s in pricelistId)
+                {
+                    pricelistsId.Add(s.Value); //id
+                    pricelistsCurrencyName.Add(s.Text);
+
+                }
+            }
+
+            //convert list of pricelists ids from string to long
+            List<long> longList = pricelistsId.ConvertAll(long.Parse);
+
+
+            //Searching for specific Prices
+            List<Prices> pricesOutput = new List<Prices>();
+
+
+            //1 currency, product
+            if (longList.Count == 1 && longProductIdSeparated.Length == 1)
+            {
+                pricesOutput = await _context.Price
+                .Where(b => b.PricelistId == longList[0]  && b.ProductId == longProductIdSeparated[0] )
+                .OrderBy(b => b.Id)
+                .Select(b => new Prices
+                {
+                    Id = b.Id,
+                    PricelistId = b.PricelistId,
+                    ProductId = b.ProductId,
+                    Amount = b.Amount
+                })
+                .ToListAsync();
+
+            }
+            //1 currency, 2 product
+            else if (longList.Count == 1 && longProductIdSeparated.Length == 2)
+            {
+                pricesOutput = await _context.Price
+                .Where(b => b.PricelistId == longList[0] && (b.ProductId == longProductIdSeparated[1] || b.ProductId == longProductIdSeparated[0]))
+                .OrderBy(b => b.Id)
+                .Select(b => new Prices
+                {
+                    Id = b.Id,
+                    PricelistId = b.PricelistId,
+                    ProductId = b.ProductId,
+                    Amount = b.Amount
+                })
+                .ToListAsync();
+
+            }
+            //1 currency, 3 product
+            else if (longList.Count == 1 && longProductIdSeparated.Length == 3)
+            {
+                pricesOutput = await _context.Price
+                .Where(b => b.PricelistId == longList[0] && (b.ProductId == longProductIdSeparated[1] || b.ProductId == longProductIdSeparated[0] || b.ProductId == longProductIdSeparated[2]))
+                .OrderBy(b => b.Id)
+                .Select(b => new Prices
+                {
+                    Id = b.Id,
+                    PricelistId = b.PricelistId,
+                    ProductId = b.ProductId,
+                    Amount = b.Amount
+                })
+                .ToListAsync();
+            }
+            //1 currency, 4 product
+            else if (longList.Count == 1 && longProductIdSeparated.Length == 4)
+            {
+                pricesOutput = await _context.Price
+                .Where(b => b.PricelistId == longList[0] && (b.ProductId == longProductIdSeparated[1] || b.ProductId == longProductIdSeparated[0] || b.ProductId == longProductIdSeparated[2] || b.ProductId == longProductIdSeparated[3]))
+                .OrderBy(b => b.Id)
+                .Select(b => new Prices
+                {
+                    Id = b.Id,
+                    PricelistId = b.PricelistId,
+                    ProductId = b.ProductId,
+                    Amount = b.Amount
+                })
+                .ToListAsync();
+            }
+            //2 currency, 1 product
+            else if (longList.Count == 2 && longProductIdSeparated.Length == 1)
+            {
+                pricesOutput = await _context.Price
+                .Where(b => (b.PricelistId == longList[0] || b.PricelistId == longList[1]) && (b.ProductId == longProductIdSeparated[0]))
+                .OrderBy(b => b.Id)
+                .Select(b => new Prices
+                {
+                    Id = b.Id,
+                    PricelistId = b.PricelistId,
+                    ProductId = b.ProductId,
+                    Amount = b.Amount
+                })
+                .ToListAsync();
+
+            }
+            //2 currency, 2 product
+            else if (longList.Count == 2 && longProductIdSeparated.Length == 2)
+            {
+                pricesOutput = await _context.Price
+                .Where(b => (b.PricelistId == longList[0] || b.PricelistId == longList[1]) && (b.ProductId == longProductIdSeparated[0] || b.ProductId == longProductIdSeparated[1]))
+                .OrderBy(b => b.Id)
+                .Select(b => new Prices
+                {
+                    Id = b.Id,
+                    PricelistId = b.PricelistId,
+                    ProductId = b.ProductId,
+                    Amount = b.Amount
+                })
+                .ToListAsync();
+
+            }
+            //2 currency, 3 product
+            else if (longList.Count == 2 && longProductIdSeparated.Length == 3)
+            {
+                pricesOutput = await _context.Price
+                .Where(b => (b.PricelistId == longList[0] || b.PricelistId == longList[1]) && (b.ProductId == longProductIdSeparated[0] || b.ProductId == longProductIdSeparated[1] || b.ProductId == longProductIdSeparated[2]))
+                .OrderBy(b => b.Id)
+                .Select(b => new Prices
+                {
+                    Id = b.Id,
+                    PricelistId = b.PricelistId,
+                    ProductId = b.ProductId,
+                    Amount = b.Amount
+                })
+                .ToListAsync();
+
+            }
+            //2 currency, 4 product
+            else if (longList.Count == 2 && longProductIdSeparated.Length == 4)
+            {
+                pricesOutput = await _context.Price
+                .Where(b => (b.PricelistId == longList[0] || b.PricelistId == longList[1]) && (b.ProductId == longProductIdSeparated[0] || b.ProductId == longProductIdSeparated[1] || b.ProductId == longProductIdSeparated[2] || b.ProductId == longProductIdSeparated[3]))
+                .OrderBy(b => b.Id)
+                .Select(b => new Prices
+                {
+                    Id = b.Id,
+                    PricelistId = b.PricelistId,
+                    ProductId = b.ProductId,
+                    Amount = b.Amount
+                })
+                .ToListAsync();
+
+            }
+            else
             {
                 return NotFound();
             }
 
-            //Find pricelist currency
-            var queary1 = from m in _context.Pricelist select m;
-
-            queary1 = queary1.Where(s => s.Currency.Contains(currency));
-
-            if (queary1 == null)
-            {
-                return NotFound();
-            }
-
-            //Find specyfic pricelist with specyfic currency and product
-            var queary2 = from m in queary1 select m;
-
-            queary2 = queary2.Where(s => s.Name.Contains(product.Name));
-            
-            if (queary2 == null)
-            {
-                return NotFound();
-            }
-
-            //Find specyfic price for given ID
-
-            var query = (from Pricelists in queary2
-                        select Pricelists.Id).First();
-
-
-            var prices = await _context.Price.FindAsync(query);
-
-            if (prices == null)
-            {
-                return NotFound();
-            }
-
-            return prices; 
+            return pricesOutput;
         }
 
         /*
