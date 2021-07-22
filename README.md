@@ -4,7 +4,7 @@
 
 Simple RestApi implementation in c#
 
-ENDPOINTS:
+**ENDPOINTS:**
 
  - [x] GET /api/products
  
